@@ -38,10 +38,13 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 /* Compiler Related Definitions */
 #if defined(__CC_ARM) || defined(__CLANG_ARM)           /* ARM Compiler */
+    #include <stdarg.h>
     #define ALIGN(n)                    __attribute__((aligned(n)))
     #define rt_inline                   static __inline
 
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
+    #include <stdarg.h>
+    #define PRAGMA(x)                   _Pragma(#x)
     #define ALIGN(n)                    PRAGMA(data_alignment=n)
     #define rt_inline                   static inline
 
