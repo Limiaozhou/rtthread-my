@@ -109,18 +109,82 @@ struct rt_list_node
 typedef struct rt_list_node rt_list_t;                  /**< Type for lists. */
 
 /**
+ * Base structure of Kernel object
+ */
+struct rt_object
+{
+    char       name[RT_NAME_MAX];                       /**< name of kernel object */
+    rt_uint8_t type;                                    /**< type of kernel object */
+    rt_uint8_t flag;                                    /**< flag of kernel object */
+
+    rt_list_t  list;                                    /**< list node of kernel object */
+};
+typedef struct rt_object *rt_object_t;                  /**< Type for kernel objects. */
+
+/**
+ *  The object type can be one of the follows with specific
+ *  macros enabled:
+ *  - Thread
+ *  - Semaphore
+ *  - Mutex
+ *  - Event
+ *  - MailBox
+ *  - MessageQueue
+ *  - MemHeap
+ *  - MemPool
+ *  - Device
+ *  - Timer
+ *  - Module
+ *  - Unknown
+ *  - Static
+ */
+enum rt_object_class_type
+{
+    RT_Object_Class_Null   = 0,                         /**< The object is not used. */
+    RT_Object_Class_Thread,                             /**< The object is a thread. */
+    RT_Object_Class_Semaphore,                          /**< The object is a semaphore. */
+    RT_Object_Class_Mutex,                              /**< The object is a mutex. */
+    RT_Object_Class_Event,                              /**< The object is a event. */
+    RT_Object_Class_MailBox,                            /**< The object is a mail box. */
+    RT_Object_Class_MessageQueue,                       /**< The object is a message queue. */
+    RT_Object_Class_MemHeap,                            /**< The object is a memory heap */
+    RT_Object_Class_MemPool,                            /**< The object is a memory pool. */
+    RT_Object_Class_Device,                             /**< The object is a device */
+    RT_Object_Class_Timer,                              /**< The object is a timer. */
+    RT_Object_Class_Module,                             /**< The object is a module. */
+    RT_Object_Class_Unknown,                            /**< The object is unknown. */
+    RT_Object_Class_Static = 0x80                       /**< The object is a static object. */
+};
+
+/**
+ * The information of the kernel object
+ */
+struct rt_object_information
+{
+    enum rt_object_class_type type;                     /**< object class type */
+    rt_list_t                 object_list;              /**< object list */
+    rt_size_t                 object_size;              /**< object size */
+};
+
+/**
  * Thread structure
  */
 struct rt_thread
 {
+	/* rt object */
+    char        name[RT_NAME_MAX];                      /**< the name of thread */
+    rt_uint8_t  type;                                   /**< type of object */
+    rt_uint8_t  flags;                                  /**< thread's flags */
+	
+	rt_list_t   list;                                   /**< the object list */
+	rt_list_t   tlist;                                  /**< the thread list */
+	
     /* stack point and entry */
     void       *sp;                                     /**< stack point */
     void       *entry;                                  /**< entry */
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
     rt_uint32_t stack_size;                             /**< stack size */
-	
-	rt_list_t   tlist;                                  /**< the thread list */
 };
 typedef struct rt_thread *rt_thread_t;
 
